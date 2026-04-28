@@ -24,8 +24,12 @@ export function Header() {
         </nav>
 
         <div className="flex items-center gap-2">
-          <Button variant="ghost" size="sm" className="hidden sm:inline-flex">Login</Button>
-          <Button size="sm" className="rounded-lg">Register</Button>
+          <Button variant="ghost" size="sm" className="hidden sm:inline-flex" asChild>
+            <Link to="/login">Login</Link>
+          </Button>
+          <Button size="sm" className="rounded-lg" asChild>
+            <Link to="/login">Register</Link>
+          </Button>
         </div>
       </div>
     </header>
