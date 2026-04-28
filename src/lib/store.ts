@@ -271,11 +271,18 @@ export const useLMSStore = create<LMSState>()(
 
       deleteUser: (id) => set((state) => {
         const user = state.users.find(u => u.id === id);
-        if (user) {
-          state.addAuditLog('USER_DELETE', `Deleted user: ${user.name}`);
-        }
+        if (user) state.addAuditLog('USER_DELETE', `Deleted user: ${user.name}`);
         return {
-          users: state.users.filter((u) => u.id !== id),
+          users: state.users.filter((u) => u.id !== id)
+            .map(u => u.teacherId === id ? { ...u, teacherId: undefined } : u),
+          subjects: state.subjects.map(s => ({
+            ...s,
+            teacherId: s.teacherId === id ? undefined : s.teacherId,
+            studentIds: s.studentIds.filter(sid => sid !== id),
+          })),
+          sessions: state.sessions
+            .filter(s => s.teacherId !== id)
+            .map(s => ({ ...s, studentIds: s.studentIds.filter(sid => sid !== id) })),
         };
       }),
 
