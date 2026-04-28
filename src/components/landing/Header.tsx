@@ -2,6 +2,14 @@ import { Link } from "@tanstack/react-router";
 import { GraduationCap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
+const NAV: Array<{ label: string; to: "/" | "/courses" | "/about" | "/stories" | "/contact" }> = [
+  { label: "Home", to: "/" },
+  { label: "Courses", to: "/courses" },
+  { label: "About us", to: "/about" },
+  { label: "Stories", to: "/stories" },
+  { label: "Contact us", to: "/contact" },
+];
+
 export function Header() {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/60 bg-background/85 backdrop-blur-md">
@@ -16,10 +24,16 @@ export function Header() {
         </Link>
 
         <nav className="hidden items-center gap-8 md:flex">
-          {["Home", "Courses", "Pages", "Articles", "Contact us"].map((l) => (
-            <a key={l} href="#" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
-              {l}
-            </a>
+          {NAV.map((item) => (
+            <Link
+              key={item.to}
+              to={item.to}
+              activeOptions={{ exact: item.to === "/" }}
+              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+              activeProps={{ className: "text-foreground font-semibold" }}
+            >
+              {item.label}
+            </Link>
           ))}
         </nav>
 
