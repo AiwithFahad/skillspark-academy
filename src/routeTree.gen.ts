@@ -29,6 +29,7 @@ import { Route as StudentSubjectsRouteImport } from './routes/student/subjects'
 import { Route as StudentProfileRouteImport } from './routes/student/profile'
 import { Route as StudentNotificationsRouteImport } from './routes/student/notifications'
 import { Route as StudentHistoryRouteImport } from './routes/student/history'
+import { Route as StoriesSlugRouteImport } from './routes/stories.$slug'
 import { Route as AdminUsersRouteImport } from './routes/admin/users'
 import { Route as AdminSubjectsRouteImport } from './routes/admin/subjects'
 import { Route as AdminSettingsRouteImport } from './routes/admin/settings'
@@ -136,6 +137,11 @@ const StudentHistoryRoute = StudentHistoryRouteImport.update({
   path: '/history',
   getParentRoute: () => StudentRoute,
 } as any)
+const StoriesSlugRoute = StoriesSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => StoriesRoute,
+} as any)
 const AdminUsersRoute = AdminUsersRouteImport.update({
   id: '/users',
   path: '/users',
@@ -174,7 +180,7 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/courses': typeof CoursesRoute
   '/login': typeof LoginRoute
-  '/stories': typeof StoriesRoute
+  '/stories': typeof StoriesRouteWithChildren
   '/student': typeof StudentRouteWithChildren
   '/teacher': typeof TeacherRouteWithChildren
   '/admin/audit-logs': typeof AdminAuditLogsRoute
@@ -183,6 +189,7 @@ export interface FileRoutesByFullPath {
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/subjects': typeof AdminSubjectsRoute
   '/admin/users': typeof AdminUsersRoute
+  '/stories/$slug': typeof StoriesSlugRoute
   '/student/history': typeof StudentHistoryRoute
   '/student/notifications': typeof StudentNotificationsRoute
   '/student/profile': typeof StudentProfileRoute
@@ -201,13 +208,14 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/courses': typeof CoursesRoute
   '/login': typeof LoginRoute
-  '/stories': typeof StoriesRoute
+  '/stories': typeof StoriesRouteWithChildren
   '/admin/audit-logs': typeof AdminAuditLogsRoute
   '/admin/curriculum': typeof AdminCurriculumRoute
   '/admin/sessions': typeof AdminSessionsRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/subjects': typeof AdminSubjectsRoute
   '/admin/users': typeof AdminUsersRoute
+  '/stories/$slug': typeof StoriesSlugRoute
   '/student/history': typeof StudentHistoryRoute
   '/student/notifications': typeof StudentNotificationsRoute
   '/student/profile': typeof StudentProfileRoute
@@ -228,7 +236,7 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/courses': typeof CoursesRoute
   '/login': typeof LoginRoute
-  '/stories': typeof StoriesRoute
+  '/stories': typeof StoriesRouteWithChildren
   '/student': typeof StudentRouteWithChildren
   '/teacher': typeof TeacherRouteWithChildren
   '/admin/audit-logs': typeof AdminAuditLogsRoute
@@ -237,6 +245,7 @@ export interface FileRoutesById {
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/subjects': typeof AdminSubjectsRoute
   '/admin/users': typeof AdminUsersRoute
+  '/stories/$slug': typeof StoriesSlugRoute
   '/student/history': typeof StudentHistoryRoute
   '/student/notifications': typeof StudentNotificationsRoute
   '/student/profile': typeof StudentProfileRoute
@@ -267,6 +276,7 @@ export interface FileRouteTypes {
     | '/admin/settings'
     | '/admin/subjects'
     | '/admin/users'
+    | '/stories/$slug'
     | '/student/history'
     | '/student/notifications'
     | '/student/profile'
@@ -292,6 +302,7 @@ export interface FileRouteTypes {
     | '/admin/settings'
     | '/admin/subjects'
     | '/admin/users'
+    | '/stories/$slug'
     | '/student/history'
     | '/student/notifications'
     | '/student/profile'
@@ -320,6 +331,7 @@ export interface FileRouteTypes {
     | '/admin/settings'
     | '/admin/subjects'
     | '/admin/users'
+    | '/stories/$slug'
     | '/student/history'
     | '/student/notifications'
     | '/student/profile'
@@ -340,7 +352,7 @@ export interface RootRouteChildren {
   ContactRoute: typeof ContactRoute
   CoursesRoute: typeof CoursesRoute
   LoginRoute: typeof LoginRoute
-  StoriesRoute: typeof StoriesRoute
+  StoriesRoute: typeof StoriesRouteWithChildren
   StudentRoute: typeof StudentRouteWithChildren
   TeacherRoute: typeof TeacherRouteWithChildren
 }
@@ -487,6 +499,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StudentHistoryRouteImport
       parentRoute: typeof StudentRoute
     }
+    '/stories/$slug': {
+      id: '/stories/$slug'
+      path: '/$slug'
+      fullPath: '/stories/$slug'
+      preLoaderRoute: typeof StoriesSlugRouteImport
+      parentRoute: typeof StoriesRoute
+    }
     '/admin/users': {
       id: '/admin/users'
       path: '/users'
@@ -554,6 +573,17 @@ const AdminRouteChildren: AdminRouteChildren = {
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
+interface StoriesRouteChildren {
+  StoriesSlugRoute: typeof StoriesSlugRoute
+}
+
+const StoriesRouteChildren: StoriesRouteChildren = {
+  StoriesSlugRoute: StoriesSlugRoute,
+}
+
+const StoriesRouteWithChildren =
+  StoriesRoute._addFileChildren(StoriesRouteChildren)
+
 interface StudentRouteChildren {
   StudentHistoryRoute: typeof StudentHistoryRoute
   StudentNotificationsRoute: typeof StudentNotificationsRoute
@@ -599,7 +629,7 @@ const rootRouteChildren: RootRouteChildren = {
   ContactRoute: ContactRoute,
   CoursesRoute: CoursesRoute,
   LoginRoute: LoginRoute,
-  StoriesRoute: StoriesRoute,
+  StoriesRoute: StoriesRouteWithChildren,
   StudentRoute: StudentRouteWithChildren,
   TeacherRoute: TeacherRouteWithChildren,
 }
