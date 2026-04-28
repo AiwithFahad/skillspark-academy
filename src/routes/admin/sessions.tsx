@@ -50,7 +50,7 @@ function SessionManagement() {
       teacherId,
       dateTime,
       studentIds: subjects.find(s => s.id === subjectId)?.studentIds || [],
-      status: 'SCHEDULED'
+      duration: 60,
     });
     
     toast.success("Session scheduled & Meet link generated");

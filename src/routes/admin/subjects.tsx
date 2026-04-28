@@ -229,7 +229,7 @@ function SubjectManagement() {
                           variant="ghost" 
                           size="sm" 
                           className="h-7 text-[10px] uppercase text-destructive hover:bg-destructive/10"
-                          onClick={() => unenrollStudentFromSubject(subject.id, student.id)}
+                          onClick={() => currentSubject && unenrollStudentFromSubject(currentSubject.id, student.id)}
                         >
                           Unenroll
                         </Button>

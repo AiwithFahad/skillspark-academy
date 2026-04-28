@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { Button } from "@/components/ui/button";
 import { useLMSStore } from "@/lib/store";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -100,8 +101,8 @@ export function StudentHistoryView() {
                       <TableCell>
                         {att ? (
                           <Badge variant={
-                            att.status === 'PRESENT' ? 'success' : 
-                            att.status === 'LATE' ? 'warning' : 'destructive'
+                            att.status === 'PRESENT' ? 'default' :
+                            att.status === 'LATE' ? 'secondary' : 'destructive'
                           } className={
                             att.status === 'PRESENT' ? 'bg-green-100 text-green-700' :
                             att.status === 'LATE' ? 'bg-orange-100 text-orange-700' : 'bg-red-100 text-red-700'

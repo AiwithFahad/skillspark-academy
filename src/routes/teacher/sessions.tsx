@@ -244,7 +244,7 @@ export function TeacherSessionsView() {
                     </Button>
                     <Button 
                       size="sm" 
-                      variant={status === 'LATE' ? 'warning' : 'outline'} 
+                      variant={status === 'LATE' ? 'default' : 'outline'} 
                       className={status === 'LATE' ? 'bg-orange-500 text-white' : ''}
                       onClick={() => handleMarkAttendance(studentId, 'LATE')}
                     >

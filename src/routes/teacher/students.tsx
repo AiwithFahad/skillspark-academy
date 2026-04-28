@@ -83,7 +83,7 @@ export function TeacherStudentsView() {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <Badge variant={student.isActive ? 'success' : 'destructive'} className="bg-green-100 text-green-700 hover:bg-green-100">
+                        <Badge variant={student.isActive ? 'default' : 'destructive'} className={student.isActive ? "bg-green-100 text-green-700 hover:bg-green-100" : ""}>
                           {student.isActive ? 'Active' : 'Inactive'}
                         </Badge>
                       </TableCell>
