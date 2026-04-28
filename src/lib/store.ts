@@ -147,53 +147,78 @@ const initialSettings: SystemSettings = {
   academicYear: '2024-2025'
 };
 
+// ===== Academy seed: 5 teachers, 30 students (6 per teacher), 5 subjects =====
+const TEACHER_SEED: Array<{ id: string; name: string; email: string; subjectId: string; subjectName: string }> = [
+  { id: 't1', name: 'Priya Sharma',  email: 'priya.math@academy.com',     subjectId: 's1', subjectName: 'Mathematics' },
+  { id: 't2', name: 'Arjun Mehta',   email: 'arjun.science@academy.com',  subjectId: 's2', subjectName: 'Science' },
+  { id: 't3', name: 'Sarah Jones',   email: 'sarah.english@academy.com',  subjectId: 's3', subjectName: 'English' },
+  { id: 't4', name: 'Daniel Okafor', email: 'daniel.cs@academy.com',      subjectId: 's4', subjectName: 'Computer Science' },
+  { id: 't5', name: 'Mei Tanaka',    email: 'mei.social@academy.com',     subjectId: 's5', subjectName: 'Social Studies' },
+];
+
+const STUDENT_FIRST = ['Alice','Bob','Emma','Liam','Noah','Olivia','Ava','Ethan','Sophia','Mia','James','Lucas','Isabella','Henry','Charlotte','Amelia','Benjamin','Harper','Jack','Evelyn','Leo','Zara','Omar','Layla','Kai','Nora','Ibrahim','Chloe','Theo','Ruby'];
+const STUDENT_LAST  = ['Smith','Wilson','Clarke','Patel','Khan','Garcia','Chen','Kim','Brown','Davis','Lopez','Singh','Martinez','Rossi','Nguyen','Ahmed','Rivera','Cohen','Dubois','Silva','Fischer','Ito','Haddad','Diallo','Yusuf','Park','Schmidt','Taylor','Abbas','Moreno'];
+
 const initialUsers: User[] = [
   { id: '1', email: 'admin@example.com', password: 'admin12345', name: 'System Admin', role: 'ADMIN', isActive: true },
-  { id: '2', email: 'teacher@example.com', password: 'password123', name: 'John Doe', role: 'TEACHER', isActive: true, subjects: ['s1', 's2'] },
-  { id: '4', email: 'sarah.jones@example.com', password: 'password123', name: 'Sarah Jones', role: 'TEACHER', isActive: true, subjects: ['s3'] },
-  { id: '3', email: 'student@example.com', password: 'password123', name: 'Alice Smith', role: 'STUDENT', isActive: true, teacherId: '2' },
-  { id: '5', email: 'bob.wilson@example.com', password: 'password123', name: 'Bob Wilson', role: 'STUDENT', isActive: true, teacherId: '2' },
-  { id: '6', email: 'emma.clarke@example.com', password: 'password123', name: 'Emma Clarke', role: 'STUDENT', isActive: true, teacherId: '4' },
+  // Back-compat login for existing demos
+  { id: 'legacy-teacher', email: 'teacher@example.com', password: 'password123', name: 'Demo Teacher', role: 'TEACHER', isActive: true, subjects: ['s1'] },
+  { id: 'legacy-student', email: 'student@example.com', password: 'password123', name: 'Demo Student', role: 'STUDENT', isActive: true, teacherId: 't1' },
+  ...TEACHER_SEED.map((t) => ({
+    id: t.id,
+    email: t.email,
+    password: 'password123',
+    name: t.name,
+    role: 'TEACHER' as Role,
+    isActive: true,
+    subjects: [t.subjectId],
+    bio: `Lead instructor — ${t.subjectName}`,
+  })),
+  ...TEACHER_SEED.flatMap((t, ti) =>
+    Array.from({ length: 6 }).map((_, si) => {
+      const idx = ti * 6 + si;
+      const first = STUDENT_FIRST[idx];
+      const last  = STUDENT_LAST[idx];
+      return {
+        id: `st${idx + 1}`,
+        email: `${first.toLowerCase()}.${last.toLowerCase()}@academy.com`,
+        password: 'password123',
+        name: `${first} ${last}`,
+        role: 'STUDENT' as Role,
+        isActive: true,
+        teacherId: t.id,
+      };
+    })
+  ),
 ];
 
-const initialSubjects: Subject[] = [
-  { id: 's1', name: 'Web Development', teacherId: '2', studentIds: ['3', '5'] },
-  { id: 's2', name: 'UI/UX Design', teacherId: '2', studentIds: ['3'] },
-  { id: 's3', name: 'Marketing Strategy', teacherId: '4', studentIds: ['6'] },
-];
+const initialSubjects: Subject[] = TEACHER_SEED.map((t, ti) => ({
+  id: t.subjectId,
+  name: t.subjectName,
+  teacherId: t.id,
+  studentIds: Array.from({ length: 6 }).map((_, si) => `st${ti * 6 + si + 1}`),
+}));
 
-const initialCurriculum: Record<string, CurriculumWeek[]> = {
-  's1': [
-    { id: 'w1', weekNumber: 1, title: 'HTML & CSS Basics', description: 'Foundation of the web', resources: ['https://example.com/res1'], assignment: 'Build a profile page' },
-    { id: 'w2', weekNumber: 2, title: 'Flexbox & Grid', description: 'Advanced layouts', resources: [], assignment: 'Responsive Dashboard' },
-  ],
-  's2': [
-    { id: 'd1', weekNumber: 1, title: 'Introduction to Figma', description: 'Design tools basics', resources: [], assignment: 'Wireframe a login page' }
-  ]
-};
+const initialCurriculum: Record<string, CurriculumWeek[]> = Object.fromEntries(
+  TEACHER_SEED.map((t) => [
+    t.subjectId,
+    [
+      { id: `${t.subjectId}-w1`, weekNumber: 1, title: `${t.subjectName} — Foundations`, description: 'Core concepts and vocabulary.', resources: [], assignment: 'Intro worksheet' },
+      { id: `${t.subjectId}-w2`, weekNumber: 2, title: `${t.subjectName} — Applied Practice`, description: 'Hands-on exercises and group work.', resources: [], assignment: 'Practice set 1' },
+    ],
+  ])
+);
 
-const initialSessions: Session[] = [
-  {
-    id: 'sess1',
-    subjectId: 's1',
-    teacherId: '2',
-    studentIds: ['3', '5'],
-    dateTime: new Date(Date.now() + 3600000).toISOString(), // 1 hour from now
-    duration: 60,
-    meetLink: 'https://meet.google.com/abc-defg-hij',
-    status: 'SCHEDULED'
-  },
-  {
-    id: 'sess2',
-    subjectId: 's2',
-    teacherId: '2',
-    studentIds: ['3'],
-    dateTime: new Date(Date.now() - 86400000).toISOString(), // Yesterday
-    duration: 45,
-    meetLink: 'https://meet.google.com/xyz-pqrs-uvw',
-    status: 'COMPLETED'
-  }
-];
+const initialSessions: Session[] = TEACHER_SEED.map((t, ti) => ({
+  id: `sess-${t.subjectId}`,
+  subjectId: t.subjectId,
+  teacherId: t.id,
+  studentIds: Array.from({ length: 6 }).map((_, si) => `st${ti * 6 + si + 1}`),
+  dateTime: new Date(Date.now() + (ti + 1) * 3600000).toISOString(),
+  duration: 60,
+  meetLink: `https://meet.google.com/${t.subjectId}-demo-${ti + 1}`,
+  status: 'SCHEDULED' as SessionStatus,
+}));
 
 export const useLMSStore = create<LMSState>()(
   persist(
@@ -246,11 +271,18 @@ export const useLMSStore = create<LMSState>()(
 
       deleteUser: (id) => set((state) => {
         const user = state.users.find(u => u.id === id);
-        if (user) {
-          state.addAuditLog('USER_DELETE', `Deleted user: ${user.name}`);
-        }
+        if (user) state.addAuditLog('USER_DELETE', `Deleted user: ${user.name}`);
         return {
-          users: state.users.filter((u) => u.id !== id),
+          users: state.users.filter((u) => u.id !== id)
+            .map(u => u.teacherId === id ? { ...u, teacherId: undefined } : u),
+          subjects: state.subjects.map(s => ({
+            ...s,
+            teacherId: s.teacherId === id ? undefined : s.teacherId,
+            studentIds: s.studentIds.filter(sid => sid !== id),
+          })),
+          sessions: state.sessions
+            .filter(s => s.teacherId !== id)
+            .map(s => ({ ...s, studentIds: s.studentIds.filter(sid => sid !== id) })),
         };
       }),
 
@@ -264,9 +296,19 @@ export const useLMSStore = create<LMSState>()(
         return { subjects: [...state.subjects, newSubject] };
       }),
 
-      deleteSubject: (id) => set((state) => ({
-        subjects: state.subjects.filter(s => s.id !== id)
-      })),
+      deleteSubject: (id) => set((state) => {
+        const subj = state.subjects.find(s => s.id === id);
+        if (subj) state.addAuditLog('SUBJECT_DELETE', `Deleted subject: ${subj.name}`);
+        const { [id]: _removed, ...restCurriculum } = state.curriculum;
+        return {
+          subjects: state.subjects.filter(s => s.id !== id),
+          curriculum: restCurriculum,
+          sessions: state.sessions.filter(s => s.subjectId !== id),
+          users: state.users.map(u =>
+            u.subjects ? { ...u, subjects: u.subjects.filter(sid => sid !== id) } : u
+          ),
+        };
+      }),
 
       assignTeacherToSubject: (subjectId, teacherId) => set((state) => ({
         subjects: state.subjects.map((s) => (s.id === subjectId ? { ...s, teacherId } : s)),
@@ -387,6 +429,7 @@ export const useLMSStore = create<LMSState>()(
     }),
     {
       name: 'skillspark-lms-storage',
+      version: 2,
     }
   )
 );
