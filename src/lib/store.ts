@@ -289,9 +289,19 @@ export const useLMSStore = create<LMSState>()(
         return { subjects: [...state.subjects, newSubject] };
       }),
 
-      deleteSubject: (id) => set((state) => ({
-        subjects: state.subjects.filter(s => s.id !== id)
-      })),
+      deleteSubject: (id) => set((state) => {
+        const subj = state.subjects.find(s => s.id === id);
+        if (subj) state.addAuditLog('SUBJECT_DELETE', `Deleted subject: ${subj.name}`);
+        const { [id]: _removed, ...restCurriculum } = state.curriculum;
+        return {
+          subjects: state.subjects.filter(s => s.id !== id),
+          curriculum: restCurriculum,
+          sessions: state.sessions.filter(s => s.subjectId !== id),
+          users: state.users.map(u =>
+            u.subjects ? { ...u, subjects: u.subjects.filter(sid => sid !== id) } : u
+          ),
+        };
+      }),
 
       assignTeacherToSubject: (subjectId, teacherId) => set((state) => ({
         subjects: state.subjects.map((s) => (s.id === subjectId ? { ...s, teacherId } : s)),
@@ -412,6 +422,7 @@ export const useLMSStore = create<LMSState>()(
     }),
     {
       name: 'skillspark-lms-storage',
+      version: 2,
     }
   )
 );
