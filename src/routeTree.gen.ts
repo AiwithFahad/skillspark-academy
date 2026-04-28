@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TeacherRouteImport } from './routes/teacher'
 import { Route as StudentRouteImport } from './routes/student'
+import { Route as StoriesRouteImport } from './routes/stories'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as CoursesRouteImport } from './routes/courses'
 import { Route as ContactRouteImport } from './routes/contact'
@@ -43,6 +44,11 @@ const TeacherRoute = TeacherRouteImport.update({
 const StudentRoute = StudentRouteImport.update({
   id: '/student',
   path: '/student',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StoriesRoute = StoriesRouteImport.update({
+  id: '/stories',
+  path: '/stories',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -168,6 +174,7 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/courses': typeof CoursesRoute
   '/login': typeof LoginRoute
+  '/stories': typeof StoriesRoute
   '/student': typeof StudentRouteWithChildren
   '/teacher': typeof TeacherRouteWithChildren
   '/admin/audit-logs': typeof AdminAuditLogsRoute
@@ -194,6 +201,7 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/courses': typeof CoursesRoute
   '/login': typeof LoginRoute
+  '/stories': typeof StoriesRoute
   '/admin/audit-logs': typeof AdminAuditLogsRoute
   '/admin/curriculum': typeof AdminCurriculumRoute
   '/admin/sessions': typeof AdminSessionsRoute
@@ -220,6 +228,7 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/courses': typeof CoursesRoute
   '/login': typeof LoginRoute
+  '/stories': typeof StoriesRoute
   '/student': typeof StudentRouteWithChildren
   '/teacher': typeof TeacherRouteWithChildren
   '/admin/audit-logs': typeof AdminAuditLogsRoute
@@ -249,6 +258,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/courses'
     | '/login'
+    | '/stories'
     | '/student'
     | '/teacher'
     | '/admin/audit-logs'
@@ -275,6 +285,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/courses'
     | '/login'
+    | '/stories'
     | '/admin/audit-logs'
     | '/admin/curriculum'
     | '/admin/sessions'
@@ -300,6 +311,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/courses'
     | '/login'
+    | '/stories'
     | '/student'
     | '/teacher'
     | '/admin/audit-logs'
@@ -328,6 +340,7 @@ export interface RootRouteChildren {
   ContactRoute: typeof ContactRoute
   CoursesRoute: typeof CoursesRoute
   LoginRoute: typeof LoginRoute
+  StoriesRoute: typeof StoriesRoute
   StudentRoute: typeof StudentRouteWithChildren
   TeacherRoute: typeof TeacherRouteWithChildren
 }
@@ -346,6 +359,13 @@ declare module '@tanstack/react-router' {
       path: '/student'
       fullPath: '/student'
       preLoaderRoute: typeof StudentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/stories': {
+      id: '/stories'
+      path: '/stories'
+      fullPath: '/stories'
+      preLoaderRoute: typeof StoriesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -579,6 +599,7 @@ const rootRouteChildren: RootRouteChildren = {
   ContactRoute: ContactRoute,
   CoursesRoute: CoursesRoute,
   LoginRoute: LoginRoute,
+  StoriesRoute: StoriesRoute,
   StudentRoute: StudentRouteWithChildren,
   TeacherRoute: TeacherRouteWithChildren,
 }
